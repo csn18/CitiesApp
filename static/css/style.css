@@ -1,0 +1,15 @@
+.block1 {
+  width: 300px;
+  background: #ccc;
+  padding: 5px;
+  padding-right: 20px;
+  border: solid 1px black;
+  float: left;
+  position: relative;
+  left: 700px;
+  top: 50px;
+}
+
+.dropdown-menu {
+    margin-right: 50px;
+}
