@@ -1,9 +1,8 @@
-list = [('Днепр',), ('Киев',), ('Донецк',), ('Харьков',), ('Одесса',), ('Моспино',), ('Николаев',), ('Новая Одесса',), ('Орехов',), ('Первомайский',)]
+request_args = {"countries_id": "1", "page": "d"}
+try:
+    page_id = int(request_args.get('page', 1))
+except ValueError:
+    page_id = 1
 
-for i in list:
-    print(i[0])
-
-
-# a = ('Днепр',)
-#
-# print(a[0])
+pseudo_limit = page_id + 1
+print(pseudo_limit)
