@@ -72,6 +72,14 @@ def index4():
     except ValueError:
         countries_id_query = 1
 
+    query = request.args.get("q")
+    if query:
+        for id, country in id_countries_db:
+            res = re.findall(query, country)
+            if res:
+                countries_id_query = id
+                break
+
     if countries_id_query:
         cities_count = query_db(f'SELECT COUNT(*) FROM cities WHERE country_id = {countries_id_query}')[0][0]
         try:
@@ -84,15 +92,6 @@ def index4():
         pages_count = range(1, math.ceil(cities_count / page_split) + 1)
         id_cities_db = query_db(
             f'SELECT city FROM cities WHERE country_id = {countries_id_query} LIMIT {limit[0]}, {limit[1]}')
-
-        query = request.args.get("q")
-        if query:
-            country = [i[1] for i in id_countries_db]
-            country = ' '.join(country)
-            result = re.findall(f'{query}', country)
-            country = [i[1] for i in id_countries_db]
-            res = ' '.join(result)
-            id_countries = [i+1 for i in range(len(country)) if res in country[i]]
 
         return render_template('main/task4.html',
                                id_countries=id_countries_db,
