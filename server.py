@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, json, jsonify
 import mysql.connector, math, re
 
 mydb = mysql.connector.connect(
@@ -41,7 +41,7 @@ def index3():
         countries_id_query = 1
 
     if countries_id_query:
-        cities_count = query_db(f'SELECT COUNT(*) FROM cities WHERE country_id = {countries_id_query}')[0][0]
+        cities_count = citiesCount()
         try:
             page_id = int(request.args.get('page', 1))
         except ValueError:
@@ -81,7 +81,7 @@ def index4():
                 break
 
     if countries_id_query:
-        cities_count = query_db(f'SELECT COUNT(*) FROM cities WHERE country_id = {countries_id_query}')[0][0]
+        cities_count = citiesCount()
         try:
             page_id = int(request.args.get('page', 1))
         except ValueError:
@@ -105,12 +105,119 @@ def index4():
     return render_template('main/task4.html', id_countries=id_countries_db)
 
 
+@app.route('/task5')
+def index5():
+    id_countries_db = query_db('SELECT id, country FROM countries')
+    try:
+        countries_id_query = int(request.args.get('countries_id', 1))
+    except ValueError:
+        countries_id_query = 1
+
+    query = request.args.get("q")
+    if query:
+        for id, country in id_countries_db:
+            res = re.findall(query, country)
+            if res:
+                countries_id_query = id
+                break
+
+    if countries_id_query:
+        cities_count = citiesCount()
+        try:
+            page_id = int(request.args.get('page', 1))
+        except ValueError:
+            page_id = 1
+
+        page_split = 5
+        limit = (page_split * (int(page_id) - 1), page_split * int(page_id))
+        pages_count = range(1, math.ceil(cities_count / page_split) + 1)
+        id_cities_db = query_db(
+            f'SELECT city FROM cities WHERE country_id = {countries_id_query} LIMIT {limit[0]}, {limit[1]}')
+
+        return render_template('main/task5.html',
+                               id_countries=id_countries_db,
+                               id_cities=id_cities_db,
+                               page=page_id,
+                               country=countries_id_query,
+                               pages_count=pages_count,
+                               q=query
+                               )
+
+    return render_template('main/task5.html', id_countries=id_countries_db)
+
+
+@app.route('/task6', methods=['POST', 'GET'])
+def index6():
+    id_countries_db = query_db('SELECT id, country FROM countries')
+    try:
+        countries_id_query = int(request.args.get('countries_id', 1))
+    except ValueError:
+        countries_id_query = 1
+
+    query = request.args.get('q')
+    if query:
+        for id, country in id_countries_db:
+            res = re.findall(query, country)
+            if res:
+                countries_id_query = id
+                break
+
+    if countries_id_query:
+        cities_count = citiesCount()
+        try:
+            page_id = int(request.args.get('page', 1))
+        except ValueError:
+            page_id = 1
+
+        page_split = 5
+        limit = (page_split * (int(page_id) - 1), page_split * int(page_id))
+        pages_count = range(1, math.ceil(cities_count / page_split) + 1)
+        id_cities_db = query_db(
+            f'SELECT city FROM cities WHERE country_id = {countries_id_query} LIMIT {limit[0]}, {limit[1]}')
+
+        return render_template('main/task6.html',
+                               id_countries=id_countries_db,
+                               id_cities=id_cities_db,
+                               page=page_id,
+                               country=countries_id_query,
+                               pages_count=pages_count,
+                               )
+
+    return render_template('main/task6.html', id_countries=id_countries_db)
+
+
+
+@app.route('/task6search', methods=['POST', 'GET'])
+def livesearch():
+    search_box = request.form.get('text', '')
+    if search_box == '':
+        return ''
+    country_id = query_db(f'SELECT id FROM countries WHERE country LIKE "{search_box}%" ORDER BY country')[0][0]
+    cities = query_db(f'SELECT city FROM cities WHERE country_id = {country_id}')
+    dict_res = {'countryId': country_id, 'cities': cities}
+    return jsonify(dict_res)
+
+
+@app.route('/task6dropdownd', methods=['POST', 'GET'])
+def dropdown():
+    dropdown = request.args.get('countries_id')
+    if dropdown:
+        cities = query_db(f'SELECT city FROM cities WHERE country_id = {dropdown}')
+        res_dict = {'cities': cities}
+    return jsonify(res_dict)
+
+
 def query_db(query):
     cursor = mydb.cursor()
     cursor.execute(query)
     result = cursor.fetchall()
     return result
 
+def citiesCount():
+    countries_id_query = int(request.args.get('countries_id', 1))
+    cities = query_db(f'SELECT COUNT(*) FROM cities WHERE country_id = {countries_id_query}')[0][0]
+    return cities
 
 if __name__ == '__main__':
     app.run(debug=True)
+
