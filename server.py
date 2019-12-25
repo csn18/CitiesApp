@@ -163,7 +163,7 @@ def index6():
                 break
 
     if countries_id_query:
-        cities_count = citiesCount()
+        cities_count = query_db(f'SELECT COUNT(*) FROM cities WHERE country_id = {countries_id_query}')[0][0]
         try:
             page_id = int(request.args.get('page', 1))
         except ValueError:
@@ -186,7 +186,6 @@ def index6():
     return render_template('main/task6.html', id_countries=id_countries_db)
 
 
-
 @app.route('/task6search', methods=['POST', 'GET'])
 def livesearch():
     search_box = request.form.get('text', '')
@@ -202,9 +201,10 @@ def livesearch():
 def dropdown():
     dropdown = request.args.get('countries_id')
     if dropdown:
-        cities = query_db(f'SELECT city FROM cities WHERE country_id = {dropdown}')
-        res_dict = {'cities': cities}
-        return jsonify(res_dict)
+        countryId = query_db(f"SELECT id, country FROM countries WHERE id LIKE '{dropdown}%' ORDER BY country")[0][0]
+        country = query_db(f"SELECT country FROM countries WHERE id LIKE '{dropdown}%' ORDER BY country")[0][0]
+        resDict = {'countriesId': countryId, 'country': country}
+        return jsonify(resDict)
 
 
 def query_db(query):
