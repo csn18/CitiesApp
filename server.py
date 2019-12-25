@@ -41,7 +41,7 @@ def index3():
         countries_id_query = 1
 
     if countries_id_query:
-        cities_count = query_db(f'SELECT COUNT(*) FROM cities WHERE country_id = {countries_id_query}')[0][0]
+        cities_count = citiesCount()
         try:
             page_id = int(request.args.get('page', 1))
         except ValueError:
@@ -81,7 +81,7 @@ def index4():
                 break
 
     if countries_id_query:
-        cities_count = query_db(f'SELECT COUNT(*) FROM cities WHERE country_id = {countries_id_query}')[0][0]
+        cities_count = citiesCount()
         try:
             page_id = int(request.args.get('page', 1))
         except ValueError:
@@ -122,7 +122,7 @@ def index5():
                 break
 
     if countries_id_query:
-        cities_count = query_db(f'SELECT COUNT(*) FROM cities WHERE country_id = {countries_id_query}')[0][0]
+        cities_count = citiesCount()
         try:
             page_id = int(request.args.get('page', 1))
         except ValueError:
@@ -204,7 +204,7 @@ def dropdown():
     if dropdown:
         cities = query_db(f'SELECT city FROM cities WHERE country_id = {dropdown}')
         res_dict = {'cities': cities}
-        return jsonify(res_dict)
+    return jsonify(res_dict)
 
 
 def query_db(query):
