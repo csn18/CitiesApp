@@ -17,15 +17,18 @@
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-dark teal lighten-2 mb-4 bg-dark">
-  <a class="navbar-brand" href="/task6"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Задание 6</font></font></a>
-  <a href="/task7">
+  <a class="navbar-brand" href="/task5"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Задание 5</font></font></a>
+  <a href="/task6">
     <button class="btn btn-secondary active" >Следующее задание</button>
   </a>
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <form class="form-inline ml-auto" method="GET">
       <div class="md-form my-0">
-        <input class="form-control mr-sm-2" id="searchBox"  type="text" placeholder="Поиск" aria-label="Поиск" name="q"
+        <input class="form-control mr-sm-2" type="text" placeholder="Поиск" aria-label="Поиск" name="q"
                value="{{ request.args.get('q', '') }}">
+        <button class="btn btn-elegant btn-rounded btn-sm my-0 waves-effect waves-light actions" type="submit"><font
+            style="vertical-align: inherit;"><font style="vertical-align: inherit;"><b>Поиск</b></font></font>
+        </button>
       </div>
     </form>
   </div>
@@ -33,32 +36,32 @@
 
 
 <div class="container_dropdown">
-  <button class="btn btn-secondary dropdown-toggle mt-5 ml-5" type="button" id="dropdownMenuButton"data-toggle="dropdown" aria-haspopup='true' aria-expanded='false'>Страны</button>
-    <div class="dropdown-menu" id='dropdown' name='drop' aria-labelledby='dropdownMenuButton'>
-      {% for id, country in id_countries %}
-        <a class="dropdown-item" href="?countries_id={{ id }}">{{ country }}</a>
+  <button class="btn btn-secondary dropdown-toggle mt-5 ml-5" type="button" id="dropdownMenuButton"
+          data-toggle="dropdown" aria-haspopup='true' aria-expanded='false'>Страны
+  </button>
+
+  <div class="mx-auto" id="cities" style="width: 800px;">
+    <ul class="list-group">
+      {% for city in id_cities %}
+      <li class="list-group-item">{{ city[0] }}</li>
       {% endfor %}
-    </div>
-</div>
+    </ul>
+  </div>
 
-<div class="mx-auto" id="cities" style="width: 800px;">
-  <ul class="list-group" id='listGroup'>
-    {% for city in id_cities %}
-    <li class="list-group-item" id="liClass">{{ city[0] }}</li>
+  <div class="dropdown-menu" aria-labelledby='dropdownMenuButton'>
+    {% for id, country in id_countries %}
+    <a class="dropdown-item" href="?countries_id={{ id }}">{{ country }}</a>
     {% endfor %}
-  </ul>
-</div>
+  </div>
 
-<nav aria-label="...">
+  <nav aria-label="...">
   <ul class="pagination ml-5" id="pagination">
     {% for page in pages_count %}
-      <li class="page-item">
-        <a class="page-link" href="?countries_id={{ country }}&page={{ page }}">{{ page }}</a>
-      </li>
+    <li class="page-item"><a class="page-link" href="?countries_id={{ country }}&page={{ page }}">{{ page }}</a></li>
     {% endfor %}
   </ul>
 </nav>
-
+</div>
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"

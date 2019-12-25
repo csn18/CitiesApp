@@ -10,15 +10,16 @@
   <title>А - Значит Амир!</title>
 </head>
 <body>
+<nav class="navbar navbar-expand-lg navbar-dark teal lighten-2 mb-4 bg-dark">
+    <a class="navbar-brand" href="/task3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Задание 3</font></font></a>
+    <a href="/task4">
+      <button class="btn btn-secondary active" >Следующее задание</button>
+    </a>
+</nav>
 
 
-<div class="dropdown-menu" aria-labelledby='dropdownMenuButton'>
-  {% for id, country in id_countries %}
-  <a class="dropdown-item" href="?countries_id={{ id }}">{{ country }}</a>
-  {% endfor %}
-</div>
 <div class="container_dropdown">
-  <button class="btn btn-secondary d2ropdown-toggle mt-5 ml-5" type="button" id="dropdownMenuButton"
+  <button class="btn btn-secondary dropdown-toggle mt-5 ml-5" type="button" id="dropdownMenuButton"
           data-toggle="dropdown" aria-haspopup='true' aria-expanded='false'>Страны
   </button>
 
