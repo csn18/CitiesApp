@@ -41,7 +41,7 @@ def index3():
         countries_id_query = 1
 
     if countries_id_query:
-        cities_count = query_db(f'SELECT COUNT(*) FROM cities WHERE country_id = {countries_id_query}')[0][0]
+        count = cities_count()
         try:
             page_id = int(request.args.get('page', 1))
         except ValueError:
@@ -49,7 +49,7 @@ def index3():
 
         page_split = 5
         limit = (page_split * (int(page_id) - 1), page_split * int(page_id))
-        pages_count = range(1, math.ceil(cities_count / page_split) + 1)
+        pages_count = range(1, math.ceil(count / page_split) + 1)
         id_cities_db = query_db(
             f'SELECT city FROM cities WHERE country_id = {countries_id_query} LIMIT {limit[0]}, {limit[1]}')
 
@@ -81,7 +81,7 @@ def index4():
                 break
 
     if countries_id_query:
-        cities_count = query_db(f'SELECT COUNT(*) FROM cities WHERE country_id = {countries_id_query}')[0][0]
+        count = cities_count()
         try:
             page_id = int(request.args.get('page', 1))
         except ValueError:
@@ -89,7 +89,7 @@ def index4():
 
         page_split = 5
         limit = (page_split * (int(page_id) - 1), page_split * int(page_id))
-        pages_count = range(1, math.ceil(cities_count / page_split) + 1)
+        pages_count = range(1, math.ceil(count / page_split) + 1)
         id_cities_db = query_db(
             f'SELECT city FROM cities WHERE country_id = {countries_id_query} LIMIT {limit[0]}, {limit[1]}')
 
@@ -110,6 +110,12 @@ def query_db(query):
     cursor.execute(query)
     result = cursor.fetchall()
     return result
+
+
+def cities_count():
+    countries_id_query = int(request.args.get('countries_id', 1))
+    cities = query_db(f'SELECT COUNT(*) FROM cities WHERE country_id = {countries_id_query}')[0][0]
+    return cities
 
 
 if __name__ == '__main__':
