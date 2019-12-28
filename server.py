@@ -204,7 +204,7 @@ def dropdown():
     if dropdown:
         cities = query_db(f'SELECT city FROM cities WHERE country_id = {dropdown}')
         res_dict = {'cities': cities}
-    return jsonify(res_dict)
+        return jsonify(res_dict)
 
 
 def query_db(query):
