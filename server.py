@@ -104,6 +104,46 @@ def index4():
 
     return render_template('main/task4.html', id_countries=id_countries_db)
 
+@app.route('/task5')
+def index5():
+    id_countries_db = query_db('SELECT id, country FROM countries')
+    try:
+        countries_id_query = int(request.args.get('countries_id', 1))
+    except ValueError:
+        countries_id_query = 1
+
+    query = request.args.get("q")
+    if query:
+        for id, country in id_countries_db:
+            res = re.findall(query, country)
+            if res:
+                countries_id_query = id
+                break
+
+    if countries_id_query:
+        cities_count = query_db(f'SELECT COUNT(*) FROM cities WHERE country_id = {countries_id_query}')[0][0]
+        try:
+            page_id = int(request.args.get('page', 1))
+        except ValueError:
+            page_id = 1
+
+        page_split = 5
+        limit = (page_split * (int(page_id) - 1), page_split * int(page_id))
+        pages_count = range(1, math.ceil(cities_count / page_split) + 1)
+        id_cities_db = query_db(
+            f'SELECT city FROM cities WHERE country_id = {countries_id_query} LIMIT {limit[0]}, {limit[1]}')
+
+        return render_template('main/task5.html',
+                               id_countries=id_countries_db,
+                               id_cities=id_cities_db,
+                               page=page_id,
+                               country=countries_id_query,
+                               pages_count=pages_count,
+                               q=query
+                               )
+
+    return render_template('main/task5.html', id_countries=id_countries_db)
+
 
 def query_db(query):
     cursor = mydb.cursor()
