@@ -74,11 +74,8 @@ def index4():
 
     query = request.args.get("q")
     if query:
-        for id, country in id_countries_db:
-            res = re.findall(query, country)
-            if res:
-                countries_id_query = id
-                break
+        res = query_db(f'SELECT id FROM countries WHERE LOWER(country) LIKE "{query}%" ORDER BY country')[0][0]
+        countries_id_query = res
 
     if countries_id_query:
         cities_count = query_db(f'SELECT COUNT(*) FROM cities WHERE country_id = {countries_id_query}')[0][0]
@@ -114,11 +111,9 @@ def index5():
 
     query = request.args.get("q")
     if query:
-        for id, country in id_countries_db:
-            res = re.findall(query, country)
-            if res:
-                countries_id_query = id
-                break
+        res = query_db(f'SELECT id FROM countries WHERE LOWER(country) LIKE "{query}%" ORDER BY country')[0][0]
+        countries_id_query = res
+
 
     if countries_id_query:
         cities_count = query_db(f'SELECT COUNT(*) FROM cities WHERE country_id = {countries_id_query}')[0][0]
