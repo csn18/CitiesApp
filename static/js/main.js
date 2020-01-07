@@ -1,27 +1,25 @@
-let countryId = '';
 
 function ajaxPagination() {
-  $('#pagination a.page-link').each((index, el) => {
-      $(el).click((e) => {
-          e.preventDefault();
-            let getHrefSplit = $(el).attr('href').split('&')[1]
-            let pageUrl = `?countries_id=${countryId}&${getHrefSplit}`
-            console.log(getHrefSplit)
+    $('#pagination a.page-link').each((index, el) => {
+        $(el).click((e) => {
+            e.preventDefault();
+            let page_url = $(el).attr('href');
+            console.log( page_url );
 
-          $.ajax({
-              url: pageUrl,
-              type: 'GET',
-              success: (data) => {
-                  $('#cities').empty();
-                  $('#cities').append( $(data).find('#cities') );
+            $.ajax({
+                url: page_url,
+                type: 'GET',
+                success: (data) => {
+                    $('#city').empty();
+                    $('#city').append( $(data).find('#city') );
 
 
-                  $('#pagination').empty();
-                  $('#pagination').append( $(data).find('#pagination').html() );
-              }
-          })
-      })
-  })
+                    $('#pagination').empty();
+                    $('#pagination').append( $(data).find('#pagination').html() );
+                }
+            })
+        })
+    })
 }
 
 
