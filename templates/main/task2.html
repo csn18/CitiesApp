@@ -11,12 +11,6 @@
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark teal lighten-2 mb-4 bg-dark">
-  <a class="navbar-brand" href="/task2"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Задание 2</font></font></a>
-  <a href="/task3">
-    <button class="btn btn-secondary active" >Следующее задание</button>
-  </a>
-
 <div class="dropdown-menu" aria-labelledby='dropdownMenuButton'>
   {% for id, country in id_countries %}
   <a class="dropdown-item" href="?countries_id={{ id }}">{{ country }}</a>
