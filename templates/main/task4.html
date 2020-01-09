@@ -13,13 +13,15 @@
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-dark teal lighten-2 mb-4 bg-dark">
-  <a class="navbar-brand" href="/task4"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">А-Амир!</font></font></a>
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+  <a class="navbar-brand" href="/task4"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Задание 4</font></font></a>
+  <a href="/task5">
+    <button class="btn btn-secondary active" >Следующее задание</button>
+  </a>
     <form class="form-inline ml-auto" method="GET">
       <div class="md-form my-0">
         <input class="form-control mr-sm-2" type="text" placeholder="Поиск" aria-label="Поиск" name="q"
                value="{{ request.args.get('q', '') }}">
-        <button class="btn btn-elegant btn-rounded btn-sm my-0 waves-effect waves-light actions bg-white" type="submit"><font
+        <button class="btn btn-elegant btn-rounded btn-sm my-0 waves-effect waves-light actions" type="submit"><font
             style="vertical-align: inherit;"><font style="vertical-align: inherit;"><b>Поиск</b></font></font></button>
       </div>
     </form>
