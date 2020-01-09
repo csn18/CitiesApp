@@ -1,13 +1,12 @@
 
-let countryId = '';
 
 function ajaxPagination() {
   $('#pagination a.page-link').each((index, el) => {
       $(el).click((e) => {
           e.preventDefault();
             let getHrefSplit = $(el).attr('href').split('&')[1]
-            let pageUrl = `?countries_id=${countryId}&${getHrefSplit}`
-            console.log(getHrefSplit)
+            let getHrefCountries = $(el).attr('href').split('=')[1][0]
+            let pageUrl = `?countries_id=${getHrefCountries}&${getHrefSplit}`
 
           $.ajax({
               url: pageUrl,
