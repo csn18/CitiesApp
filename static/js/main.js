@@ -33,7 +33,7 @@ function ajaxSearch() {
 
       $.ajax({
         url: '/task6search',
-        type: 'POST',
+        type: 'GET',
         data: {text: textInSearchBox},
         success: (result) => {
           countryId = result['countryId']

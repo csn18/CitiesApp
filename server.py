@@ -179,9 +179,9 @@ def index6():
     return render_template('main/task6.html', id_countries=id_countries_db)
 
 
-@app.route('/task6search', methods=['POST'])
+@app.route('/task6search')
 def live_search():
-    search_box = request.form.get('text', '')
+    search_box = request.args.get('text', '')
     if search_box == '':
         return ''
     country_id = query_db(f'SELECT id FROM countries WHERE country LIKE "{search_box}%" ORDER BY country')[0][0]
