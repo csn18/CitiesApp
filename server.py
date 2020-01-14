@@ -41,28 +41,7 @@ def index3():
     except ValueError:
         countries_id_query = 1
 
-    if countries_id_query:
-        cities_count = query_db(f'SELECT COUNT(*) FROM cities WHERE country_id = {countries_id_query}')[0][0]
-        try:
-            page_id = int(request.args.get('page', 1))
-        except ValueError:
-            page_id = 1
-
-        pages_count = pagination(cities_count)
-        limit_page = limit(page_id)
-
-        id_cities_db = query_db(
-            f'SELECT city FROM cities WHERE country_id = {countries_id_query} LIMIT {limit_page[0]}, {limit_page[1]}')
-
-        return render_template('main/task3.html',
-                               id_countries=id_countries_db,
-                               id_cities=id_cities_db,
-                               page=page_id,
-                               country=countries_id_query,
-                               pages_count=pages_count
-                               )
-
-    return render_template('main/task3.html', id_countries=id_countries_db)
+    return render_page('main/task3.html', countries_id_query, id_countries_db)
 
 
 @app.route('/task4')
@@ -78,29 +57,7 @@ def index4():
         countries_id_query = \
             query_db(f'SELECT id FROM countries WHERE LOWER(country) LIKE "{query}%" ORDER BY country')[0][0]
 
-    if countries_id_query:
-        cities_count = query_db(f'SELECT COUNT(*) FROM cities WHERE country_id = {countries_id_query}')[0][0]
-        try:
-            page_id = int(request.args.get('page', 1))
-        except ValueError:
-            page_id = 1
-
-        pages_count = pagination(cities_count)
-        limit_page = limit(page_id)
-
-        id_cities_db = query_db(
-            f'SELECT city FROM cities WHERE country_id = {countries_id_query} LIMIT {limit_page[0]}, {limit_page[1]}')
-
-        return render_template('main/task4.html',
-                               id_countries=id_countries_db,
-                               id_cities=id_cities_db,
-                               page=page_id,
-                               country=countries_id_query,
-                               pages_count=pages_count,
-                               q=query
-                               )
-
-    return render_template('main/task4.html', id_countries=id_countries_db)
+    return render_page('main/task4.html', countries_id_query, id_countries_db, query)
 
 
 @app.route('/task5')
@@ -116,29 +73,7 @@ def index5():
         countries_id_query = \
             query_db(f'SELECT id FROM countries WHERE LOWER(country) LIKE "{query}%" ORDER BY country')[0][0]
 
-    if countries_id_query:
-        cities_count = query_db(f'SELECT COUNT(*) FROM cities WHERE country_id = {countries_id_query}')[0][0]
-        try:
-            page_id = int(request.args.get('page', 1))
-        except ValueError:
-            page_id = 1
-
-        pages_count = pagination(cities_count)
-        limit_page = limit(page_id)
-
-        id_cities_db = query_db(
-            f'SELECT city FROM cities WHERE country_id = {countries_id_query} LIMIT {limit_page[0]}, {limit_page[1]}')
-
-        return render_template('main/task5.html',
-                               id_countries=id_countries_db,
-                               id_cities=id_cities_db,
-                               page=page_id,
-                               country=countries_id_query,
-                               pages_count=pages_count,
-                               q=query
-                               )
-
-    return render_template('main/task5.html', id_countries=id_countries_db)
+    return render_page('main/task5.html', countries_id_query, id_countries_db, query)
 
 
 @app.route('/task6')
@@ -154,29 +89,7 @@ def index6():
         countries_id_query = \
             query_db(f'SELECT id FROM countries WHERE LOWER(country) LIKE "{query}%" ORDER BY country')[0][0]
 
-    if countries_id_query:
-        cities_count = query_db(f'SELECT COUNT(*) FROM cities WHERE country_id = {countries_id_query}')[0][0]
-        try:
-            page_id = int(request.args.get('page', 1))
-        except ValueError:
-            page_id = 1
-
-        pages_count = pagination(cities_count)
-        limit_page = limit(page_id)
-
-        id_cities_db = query_db(
-            f'SELECT city FROM cities WHERE country_id = {countries_id_query} LIMIT {limit_page[0]}, {limit_page[1]}')
-
-        return render_template('main/task6.html',
-                               id_countries=id_countries_db,
-                               id_cities=id_cities_db,
-                               page=page_id,
-                               country=countries_id_query,
-                               pages_count=pages_count,
-                               q=query
-                               )
-
-    return render_template('main/task6.html', id_countries=id_countries_db)
+    return render_page('main/task6.html', countries_id_query, id_countries_db, query)
 
 
 @app.route('/task6search')
@@ -197,16 +110,28 @@ def query_db(query):
     return result
 
 
-def pagination(cities_count):
-    page_split = 5
-    pages_count = range(1, math.ceil(cities_count / page_split) + 1)
-    return pages_count
+def render_page(html_template, countries_id_query, id_countries_db, query=''):
+    cities_count = query_db(f'SELECT COUNT(*) FROM cities WHERE country_id = {countries_id_query}')[0][0]
+    try:
+        page_id = int(request.args.get('page', 1))
+    except ValueError:
+        page_id = 1
 
-
-def limit(page_id):
     page_split = 5
     limit_page = (page_split * (int(page_id) - 1), page_split * int(page_id))
-    return limit_page
+    pages_count = range(1, math.ceil(cities_count / page_split) + 1)
+
+    id_cities_db = query_db(
+        f'SELECT city FROM cities WHERE country_id = {countries_id_query} LIMIT {limit_page[0]}, {limit_page[1]}')
+
+    return render_template(html_template,
+                           id_countries=id_countries_db,
+                           id_cities=id_cities_db,
+                           page=page_id,
+                           country=countries_id_query,
+                           pages_count=pages_count,
+                           q=query
+                           )
 
 
 if __name__ == '__main__':
