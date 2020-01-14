@@ -1,5 +1,6 @@
-from flask import Flask, render_template, request, jsonify, json
-import mysql.connector, math, re
+import math
+import mysql.connector
+from flask import Flask, render_template, request, jsonify
 
 mydb = mysql.connector.connect(
     host='localhost',
@@ -47,11 +48,11 @@ def index3():
         except ValueError:
             page_id = 1
 
-        page_split = 5
-        limit = (page_split * (int(page_id) - 1), page_split * int(page_id))
-        pages_count = range(1, math.ceil(cities_count / page_split) + 1)
+        pages_count = pagination(cities_count)
+        limit_page = limit(page_id)
+
         id_cities_db = query_db(
-            f'SELECT city FROM cities WHERE country_id = {countries_id_query} LIMIT {limit[0]}, {limit[1]}')
+            f'SELECT city FROM cities WHERE country_id = {countries_id_query} LIMIT {limit_page[0]}, {limit_page[1]}')
 
         return render_template('main/task3.html',
                                id_countries=id_countries_db,
@@ -74,7 +75,8 @@ def index4():
 
     query = request.args.get("q")
     if query:
-        countries_id_query = query_db(f'SELECT id FROM countries WHERE LOWER(country) LIKE "{query}%" ORDER BY country')[0][0]
+        countries_id_query = \
+            query_db(f'SELECT id FROM countries WHERE LOWER(country) LIKE "{query}%" ORDER BY country')[0][0]
 
     if countries_id_query:
         cities_count = query_db(f'SELECT COUNT(*) FROM cities WHERE country_id = {countries_id_query}')[0][0]
@@ -83,11 +85,11 @@ def index4():
         except ValueError:
             page_id = 1
 
-        page_split = 5
-        limit = (page_split * (int(page_id) - 1), page_split * int(page_id))
-        pages_count = range(1, math.ceil(cities_count / page_split) + 1)
+        pages_count = pagination(cities_count)
+        limit_page = limit(page_id)
+
         id_cities_db = query_db(
-            f'SELECT city FROM cities WHERE country_id = {countries_id_query} LIMIT {limit[0]}, {limit[1]}')
+            f'SELECT city FROM cities WHERE country_id = {countries_id_query} LIMIT {limit_page[0]}, {limit_page[1]}')
 
         return render_template('main/task4.html',
                                id_countries=id_countries_db,
@@ -111,7 +113,8 @@ def index5():
 
     query = request.args.get("q")
     if query:
-        countries_id_query = query_db(f'SELECT id FROM countries WHERE LOWER(country) LIKE "{query}%" ORDER BY country')[0][0]
+        countries_id_query = \
+            query_db(f'SELECT id FROM countries WHERE LOWER(country) LIKE "{query}%" ORDER BY country')[0][0]
 
     if countries_id_query:
         cities_count = query_db(f'SELECT COUNT(*) FROM cities WHERE country_id = {countries_id_query}')[0][0]
@@ -120,11 +123,11 @@ def index5():
         except ValueError:
             page_id = 1
 
-        page_split = 5
-        limit = (page_split * (int(page_id) - 1), page_split * int(page_id))
-        pages_count = range(1, math.ceil(cities_count / page_split) + 1)
+        pages_count = pagination(cities_count)
+        limit_page = limit(page_id)
+
         id_cities_db = query_db(
-            f'SELECT city FROM cities WHERE country_id = {countries_id_query} LIMIT {limit[0]}, {limit[1]}')
+            f'SELECT city FROM cities WHERE country_id = {countries_id_query} LIMIT {limit_page[0]}, {limit_page[1]}')
 
         return render_template('main/task5.html',
                                id_countries=id_countries_db,
@@ -148,7 +151,8 @@ def index6():
 
     query = request.args.get("q")
     if query:
-        countries_id_query = query_db(f'SELECT id FROM countries WHERE LOWER(country) LIKE "{query}%" ORDER BY country')[0][0]
+        countries_id_query = \
+            query_db(f'SELECT id FROM countries WHERE LOWER(country) LIKE "{query}%" ORDER BY country')[0][0]
 
     if countries_id_query:
         cities_count = query_db(f'SELECT COUNT(*) FROM cities WHERE country_id = {countries_id_query}')[0][0]
@@ -157,11 +161,11 @@ def index6():
         except ValueError:
             page_id = 1
 
-        page_split = 5
-        limit = (page_split * (int(page_id) - 1), page_split * int(page_id))
-        pages_count = range(1, math.ceil(cities_count / page_split) + 1)
+        pages_count = pagination(cities_count)
+        limit_page = limit(page_id)
+
         id_cities_db = query_db(
-            f'SELECT city FROM cities WHERE country_id = {countries_id_query} LIMIT {limit[0]}, {limit[1]}')
+            f'SELECT city FROM cities WHERE country_id = {countries_id_query} LIMIT {limit_page[0]}, {limit_page[1]}')
 
         return render_template('main/task6.html',
                                id_countries=id_countries_db,
@@ -174,7 +178,8 @@ def index6():
 
     return render_template('main/task6.html', id_countries=id_countries_db)
 
-@app.route('/task6search', methods=['POST', 'GET'])
+
+@app.route('/task6search', methods=['POST'])
 def live_search():
     search_box = request.form.get('text', '')
     if search_box == '':
@@ -190,6 +195,18 @@ def query_db(query):
     cursor.execute(query)
     result = cursor.fetchall()
     return result
+
+
+def pagination(cities_count):
+    page_split = 5
+    pages_count = range(1, math.ceil(cities_count / page_split) + 1)
+    return pages_count
+
+
+def limit(page_id):
+    page_split = 5
+    limit_page = (page_split * (int(page_id) - 1), page_split * int(page_id))
+    return limit_page
 
 
 if __name__ == '__main__':

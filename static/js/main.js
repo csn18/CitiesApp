@@ -37,7 +37,6 @@ function ajaxSearch() {
         data: {text: textInSearchBox},
         success: (result) => {
           countryId = result['countryId']
-          console.log(countryId)
           res = result['cities']
 
 
