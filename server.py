@@ -33,35 +33,19 @@ def index2():
     return render_template('main/task2.html', id_countries=id_countries_db)
 
 
-@app.route('/task3')
-def index3():
+@app.route('/task3', defaults={'task_url': '/task3'})
+def index3(task_url):
     id_countries_db = query_db('SELECT id, country FROM countries')
     try:
         countries_id_query = int(request.args.get('countries_id', 1))
     except ValueError:
         countries_id_query = 1
 
-    return render_page('main/task3.html', countries_id_query, id_countries_db)
+    return render_page(task_url, countries_id_query, id_countries_db)
 
 
-@app.route('/task4')
-def index4():
-    id_countries_db = query_db('SELECT id, country FROM countries')
-    try:
-        countries_id_query = int(request.args.get('countries_id', 1))
-    except ValueError:
-        countries_id_query = 1
-
-    query = request.args.get("q")
-    if query:
-        countries_id_query = \
-            query_db(f'SELECT id FROM countries WHERE LOWER(country) LIKE "{query}%" ORDER BY country')[0][0]
-
-    return render_page('main/task4.html', countries_id_query, id_countries_db, query)
-
-
-@app.route('/task5')
-def index5():
+@app.route('/task4', defaults={'task_url': '/task4'})
+def index4(task_url):
     id_countries_db = query_db('SELECT id, country FROM countries')
     try:
         countries_id_query = int(request.args.get('countries_id', 1))
@@ -70,14 +54,13 @@ def index5():
 
     query = request.args.get("q")
     if query:
-        countries_id_query = \
-            query_db(f'SELECT id FROM countries WHERE LOWER(country) LIKE "{query}%" ORDER BY country')[0][0]
+        countries_id_query = request_response(query)
 
-    return render_page('main/task5.html', countries_id_query, id_countries_db, query)
+    return render_page(task_url, countries_id_query, id_countries_db, query)
 
 
-@app.route('/task6')
-def index6():
+@app.route('/task5', defaults={'task_url': '/task5'})
+def index5(task_url):
     id_countries_db = query_db('SELECT id, country FROM countries')
     try:
         countries_id_query = int(request.args.get('countries_id', 1))
@@ -86,13 +69,27 @@ def index6():
 
     query = request.args.get("q")
     if query:
-        countries_id_query = \
-            query_db(f'SELECT id FROM countries WHERE LOWER(country) LIKE "{query}%" ORDER BY country')[0][0]
+        countries_id_query = request_response(query)
 
-    return render_page('main/task6.html', countries_id_query, id_countries_db, query)
+    return render_page(task_url, countries_id_query, id_countries_db, query)
 
 
-@app.route('/task6search')
+@app.route('/task6', defaults={'task_url': '/task6'})
+def index6(task_url):
+    id_countries_db = query_db('SELECT id, country FROM countries')
+    try:
+        countries_id_query = int(request.args.get('countries_id', 1))
+    except ValueError:
+        countries_id_query = 1
+
+    query = request.args.get("q")
+    if query:
+        countries_id_query = request_response(query)
+
+    return render_page(task_url, countries_id_query, id_countries_db, query)
+
+
+@app.route('/search')
 def live_search():
     search_box = request.args.get('text', '')
     if search_box == '':
@@ -110,6 +107,12 @@ def query_db(query):
     return result
 
 
+def request_response(query):
+    countries_id_query = \
+        query_db(f'SELECT id FROM countries WHERE LOWER(country) LIKE "{query}%" ORDER BY country')[0][0]
+    return countries_id_query
+
+
 def render_page(html_template, countries_id_query, id_countries_db, query=''):
     cities_count = query_db(f'SELECT COUNT(*) FROM cities WHERE country_id = {countries_id_query}')[0][0]
     try:
@@ -124,7 +127,7 @@ def render_page(html_template, countries_id_query, id_countries_db, query=''):
     id_cities_db = query_db(
         f'SELECT city FROM cities WHERE country_id = {countries_id_query} LIMIT {limit_page[0]}, {limit_page[1]}')
 
-    return render_template(html_template,
+    return render_template(f'main{html_template}.html',
                            id_countries=id_countries_db,
                            id_cities=id_cities_db,
                            page=page_id,

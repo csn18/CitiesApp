@@ -32,18 +32,18 @@ function ajaxSearch() {
       textInSearchBox = $('#searchBox').val();
 
       $.ajax({
-        url: '/task6search',
+        url: '/search',
         type: 'GET',
         data: {text: textInSearchBox},
         success: (result) => {
           countryId = result['countryId']
-          res = result['cities']
+          cities = result['cities']
 
 
           if(result) {
             $('#listGroup').empty();
             for (let i = 0; i < 5; i++) {
-            $('#listGroup').append(`<li class="list-group-item">${res[i]}</li>`)
+            $('#listGroup').append(`<li class="list-group-item">${cities[i]}</li>`)
             }
           }
         }
