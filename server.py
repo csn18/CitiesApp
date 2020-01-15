@@ -14,90 +14,42 @@ app = Flask(__name__)
 
 @app.route('/task1')
 def index1():
-    countries = query_db('SELECT country FROM countries')
-    return render_template('main/task1.html', countries=countries)
+    return render_page(request.path)
 
 
 @app.route('/task2')
 def index2():
-    id_countries_db = query_db('SELECT id, country FROM countries')
-    countries_id_query = request.args.get('countries_id')
-
-    if countries_id_query:
-        id_cities_db = query_db(f'SELECT city FROM cities WHERE country_id = {countries_id_query}')
-        return render_template('main/task2.html',
-                               id_countries=id_countries_db,
-                               id_cities=id_cities_db
-                               )
-
-    return render_template('main/task2.html', id_countries=id_countries_db)
+    return render_page(request.path)
 
 
-@app.route('/task3', defaults={'task_url': '/task3'})
-def index3(task_url):
-    id_countries_db = query_db('SELECT id, country FROM countries')
-    try:
-        countries_id_query = int(request.args.get('countries_id', 1))
-    except ValueError:
-        countries_id_query = 1
-
-    return render_page(task_url, countries_id_query, id_countries_db)
+@app.route('/task3')
+def index3():
+    return render_page(request.path)
 
 
-@app.route('/task4', defaults={'task_url': '/task4'})
-def index4(task_url):
-    id_countries_db = query_db('SELECT id, country FROM countries')
-    try:
-        countries_id_query = int(request.args.get('countries_id', 1))
-    except ValueError:
-        countries_id_query = 1
-
-    query = request.args.get("q")
-    if query:
-        countries_id_query = request_response(query)
-
-    return render_page(task_url, countries_id_query, id_countries_db, query)
+@app.route('/task4')
+def index4():
+    return render_page(request.path)
 
 
-@app.route('/task5', defaults={'task_url': '/task5'})
-def index5(task_url):
-    id_countries_db = query_db('SELECT id, country FROM countries')
-    try:
-        countries_id_query = int(request.args.get('countries_id', 1))
-    except ValueError:
-        countries_id_query = 1
-
-    query = request.args.get("q")
-    if query:
-        countries_id_query = request_response(query)
-
-    return render_page(task_url, countries_id_query, id_countries_db, query)
+@app.route('/task5')
+def index5():
+    return render_page(request.path)
 
 
-@app.route('/task6', defaults={'task_url': '/task6'})
-def index6(task_url):
-    id_countries_db = query_db('SELECT id, country FROM countries')
-    try:
-        countries_id_query = int(request.args.get('countries_id', 1))
-    except ValueError:
-        countries_id_query = 1
-
-    query = request.args.get("q")
-    if query:
-        countries_id_query = request_response(query)
-
-    return render_page(task_url, countries_id_query, id_countries_db, query)
+@app.route('/task6')
+def index6():
+    return render_page(request.path)
 
 
 @app.route('/search')
 def live_search():
     search_box = request.args.get('text', '')
-    if search_box == '':
-        return ''
-    country_id = query_db(f'SELECT id FROM countries WHERE country LIKE "{search_box}%" ORDER BY country')[0][0]
-    cities = query_db(f'SELECT city FROM cities WHERE country_id = {country_id}')
-    dict_res = {'countryId': country_id, 'cities': cities}
-    return jsonify(dict_res)
+    if search_box:
+        country_id = query_db(f'SELECT id FROM countries WHERE country LIKE "{search_box}%" ORDER BY country')[0][0]
+        cities = query_db(f'SELECT city FROM cities WHERE country_id = {country_id}')
+        result_search = {'countryId': country_id, 'cities': cities}
+        return jsonify(result_search)
 
 
 def query_db(query):
@@ -107,13 +59,20 @@ def query_db(query):
     return result
 
 
-def request_response(query):
-    countries_id_query = \
-        query_db(f'SELECT id FROM countries WHERE LOWER(country) LIKE "{query}%" ORDER BY country')[0][0]
-    return countries_id_query
+def render_page(html_template):
+    countries = query_db('SELECT country FROM countries')
 
+    id_countries_db = query_db('SELECT id, country FROM countries')
+    try:
+        countries_id_query = int(request.args.get('countries_id', 1))
+    except ValueError:
+        countries_id_query = 1
 
-def render_page(html_template, countries_id_query, id_countries_db, query=''):
+    query = request.args.get("q")
+    if query:
+        countries_id_query = \
+            query_db(f'SELECT id FROM countries WHERE LOWER(country) LIKE "{query}%" ORDER BY country')[0][0]
+
     cities_count = query_db(f'SELECT COUNT(*) FROM cities WHERE country_id = {countries_id_query}')[0][0]
     try:
         page_id = int(request.args.get('page', 1))
@@ -128,6 +87,7 @@ def render_page(html_template, countries_id_query, id_countries_db, query=''):
         f'SELECT city FROM cities WHERE country_id = {countries_id_query} LIMIT {limit_page[0]}, {limit_page[1]}')
 
     return render_template(f'main{html_template}.html',
+                           countries=countries,
                            id_countries=id_countries_db,
                            id_cities=id_cities_db,
                            page=page_id,
