@@ -42,6 +42,11 @@ def index6():
     return render_page(request.path)
 
 
+@app.route('/task7')
+def index7():
+    return render_page(request.path)
+
+
 @app.route('/search')
 def live_search():
     search_box = request.args.get('text', '')
