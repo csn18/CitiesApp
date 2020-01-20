@@ -1,4 +1,9 @@
+'use strict';
+
+
 let countryId = '';
+let cities = '';
+
 
 function ajaxPagination() {
     $('#pagination a.page-link').each((index, el) => {
@@ -28,7 +33,9 @@ function ajaxPagination() {
 function ajaxSearch() {
     $(document).ready(function () {
         $('#searchBox').on('input', function (e) {
+            let textInSearchBox;
             textInSearchBox = $('#searchBox').val();
+
 
             $.ajax({
                 url: '/search',
@@ -37,6 +44,7 @@ function ajaxSearch() {
                 success: (result) => {
                     countryId = result['countryId'];
                     cities = result['cities'];
+                    initMap();
 
 
                     if (result) {
@@ -63,11 +71,10 @@ function initMap() {
     function geocode() {
         let myMap = new google.maps.Map(document.getElementById('map'), opt);
         let apiKey = 'AIzaSyAJSa41jnaiHI4OD54Vg507O0qQKcXeY-0';
-        let city = ['Москва', 'Казань', 'Севастополь', 'Екатеринбург', 'Киров'];
-        for (let nameCity of city) {
+        for (let nameCity of cities) {
             axios.get('https://maps.googleapis.com/maps/api/geocode/json', {
                 params: {
-                    address: nameCity,
+                    address: nameCity[0],
                     key: apiKey
                 }
             }).then(function (response) {
@@ -80,7 +87,7 @@ function initMap() {
                 let marker = new google.maps.Marker({
                     position: {lat: lat, lng: lng},
                     map: myMap,
-                    title: nameCity
+                    title: nameCity[0]
 
                 });
 
@@ -93,18 +100,18 @@ function initMap() {
 }
 
 
-originalOnload = window.onload;
+let originalOnload = window.onload;
 window.onload = function () {
     if (originalOnload) {
         originalOnload();
     }
     $(document).ready(function () {
         ajaxPagination()
-    })
+    });
 
     $(document).ajaxStop(function () {
         ajaxPagination()
-    })
+    });
 
     $(document).ready(function () {
         ajaxSearch()
