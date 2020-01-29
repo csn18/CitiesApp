@@ -5,7 +5,6 @@ let cities = '';
 let pageCount = '';
 let pageId = '';
 
-
 function ajaxSearch() {
     $(document).ready(function () {
         $('#searchBox').on('input', function (e) {
@@ -21,6 +20,7 @@ function ajaxSearch() {
                     cities = result['cities'];
                     pageCount = result['pageCount'];
 
+                    initMap();
 
                     $('#pagination').empty();
                     for (let page = 1; page <= pageCount; page++) {
@@ -53,6 +53,7 @@ function ajaxPagination() {
                     pageCount = result['pageCount'];
                     cities = result['cities'];
 
+                        initMap();
 
                         $('#pagination').empty();
                         for (let page = 1; page <= pageCount; page++) {
@@ -86,6 +87,7 @@ function ajaxDropdown() {
                     cities = result['cities'];
                     pageCount = result['pageCount'];
 
+                    initMap();
 
                     $('#pagination').empty();
                     for (let page = 1; page <= pageCount; page++) {
@@ -100,6 +102,43 @@ function ajaxDropdown() {
             })
         })
     })
+}
+
+
+function initMap() {
+    let opt = {
+        center: {lat: 40, lng: 0},
+        zoom: 2
+    };
+
+    geocode();
+
+    function geocode() {
+        let myMap = new google.maps.Map(document.getElementById('map'), opt);
+        let apiKey = 'AIzaSyAJSa41jnaiHI4OD54Vg507O0qQKcXeY-0';
+        for (let nameCity of cities) {
+            axios.get('https://maps.googleapis.com/maps/api/geocode/json', {
+                params: {
+                    address: nameCity,
+                    key: apiKey
+                }
+            }).then(function (response) {
+
+                let lat = response.data.results[0].geometry.location.lat;
+                let lng = response.data.results[0].geometry.location.lng;
+
+                new google.maps.Marker({
+                    position: {lat: lat, lng: lng},
+                    map: myMap,
+                    title: nameCity
+
+                });
+
+            }).catch(function (error) {
+                console.log(error);
+            })
+        }
+    }
 }
 
 
