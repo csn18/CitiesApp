@@ -47,30 +47,19 @@ def index7():
     return render_page(request.path)
 
 
-@app.route('/ajaxSearch')
-def live_search():
-    search_box = request.args.get('text', '')
-    page_id = request.args.get('pageId', 1)
-    if search_box:
-        country = query_db(f'SELECT id FROM countries WHERE country LIKE "{search_box}%" ORDER BY country')[0]
-        pages_count = pagination(page_id, country)['pages_count']
-        id_cities_db = pagination(page_id, country)['id_cities_db']
-        result_search = {'countryId': country, 'cities': id_cities_db, 'pageCount': pages_count}
-        return jsonify(result_search)
-
-
 @app.route('/ajaxFunction')
 def page():
     page_id = request.args.get('pageId', 1)
-    country = request.args.get('countryId', 1)
-
-    country_id = query_db(f"SELECT id FROM countries WHERE id LIKE '{country}%' ORDER BY country")[0]
-
-    if page_id:
-        pages_count = pagination(page_id, country)['pages_count']
-        id_cities_db = pagination(page_id, country)['id_cities_db']
-        result = {'pageCount': pages_count, 'cities': id_cities_db, 'countriesId': country_id}
-        return jsonify(result)
+    search_box = request.args.get('text', '')
+    if search_box:
+        country = query_db(f"SELECT id FROM countries WHERE country LIKE '{search_box}%' ORDER BY country")[0]
+    else:
+        country = request.args.get('countryId', 1)
+        country = query_db(f"SELECT id FROM countries WHERE id LIKE '{country}%' ORDER BY country")[0]
+    pages_and_cities = pagination(page_id, country)
+    result = {'pageCount': pages_and_cities['pages_cont'], 'cities': pages_and_cities['id_cities_db'],
+              'countryId': country}
+    return jsonify(result)
 
 
 def pagination(page_id, country):
@@ -101,18 +90,17 @@ def render_page(html_template):
     query = request.args.get("q")
     if query:
         country = \
-            query_db(f'SELECT id FROM countries WHERE LOWER(country) LIKE "{query}%" ORDER BY country')
+            query_db(f'SELECT id FROM countries WHERE LOWER(country) LIKE "{query}%" ORDER BY country')[0]
     page_id = int(request.args.get('page', 1))
-    pages_count = range(1, pagination(page_id, country)['pages_count'] + int(1))
-    id_cities_db = pagination(page_id, country)['id_cities_db']
+    pages_and_cities = pagination(page_id, country)
 
     return render_template(f"main{html_template}.html",
                            countries=countries,
                            id_countries=id_countries_db,
-                           id_cities=id_cities_db,
+                           id_cities=pages_and_cities['id_cities_db'],
                            page=page_id,
                            country=country,
-                           pages_count=pages_count,
+                           pages_count=pages_and_cities['pages_count'],
                            q=query
                            )
 
