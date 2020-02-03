@@ -3,10 +3,11 @@ import mysql.connector
 from flask import Flask, render_template, request, jsonify
 
 mydb = mysql.connector.connect(
-    host='localhost',
+    host='172.17.0.2',
+    port=3306,
     user='rasim',
-    passwd='4152',
-    database='amir_test'
+    passwd='4252',
+    database='cities_app'
 )
 
 app = Flask(__name__)
@@ -42,57 +43,65 @@ def index6():
     return render_page(request.path)
 
 
-@app.route('/search')
-def live_search():
+@app.route('/task7')
+def index7():
+    return render_page(request.path)
+
+
+@app.route('/ajaxFunction')
+def page():
+    page_id = request.args.get('pageId', 1)
     search_box = request.args.get('text', '')
     if search_box:
-        country_id = query_db(f'SELECT id FROM countries WHERE country LIKE "{search_box}%" ORDER BY country')[0][0]
-        cities = query_db(f'SELECT city FROM cities WHERE country_id = {country_id}')
-        result_search = {'countryId': country_id, 'cities': cities}
-        return jsonify(result_search)
+        country = query_db(f"SELECT id FROM countries WHERE country LIKE '{search_box}%' ORDER BY country")[0]
+    else:
+        country = request.args.get('countryId', 1)
+        country = query_db(f"SELECT id FROM countries WHERE id LIKE '{country}%' ORDER BY country")[0]
+    pages_and_cities = pagination(page_id, country)
+    result = {'pageCount': pages_and_cities['pages_count'], 'cities': pages_and_cities['id_cities_db'],
+              'countryId': country}
+    return jsonify(result)
+
+
+def pagination(page_id, country):
+    cities_count = query_db(f'SELECT COUNT(*) FROM cities WHERE country_id = {country}')[0]
+    page_split = 5
+    limit_page = (page_split * (int(page_id) - 1), 5)
+    pages_count = math.ceil(cities_count / page_split)
+
+    id_cities_db = query_db(
+        f'SELECT city FROM cities WHERE country_id = {country} LIMIT {limit_page[0]}, {limit_page[1]}')
+
+    result = {'id_cities_db': id_cities_db, 'pages_count': pages_count}
+    return result
 
 
 def query_db(query):
     cursor = mydb.cursor()
     cursor.execute(query)
     result = cursor.fetchall()
+    result = [i[0] if len(i) == 1 else i for i in result]
     return result
 
 
 def render_page(html_template):
     countries = query_db('SELECT country FROM countries')
-
     id_countries_db = query_db('SELECT id, country FROM countries')
-    try:
-        countries_id_query = int(request.args.get('countries_id', 1))
-    except ValueError:
-        countries_id_query = 1
-
+    country = int(request.args.get('countries_id', 1))
     query = request.args.get("q")
     if query:
-        countries_id_query = \
-            query_db(f'SELECT id FROM countries WHERE LOWER(country) LIKE "{query}%" ORDER BY country')[0][0]
+        country = \
+            query_db(f'SELECT id FROM countries WHERE LOWER(country) LIKE "{query}%" ORDER BY country')[0]
+    page_id = int(request.args.get('page', 1))
+    pages_and_cities = pagination(page_id, country)
 
-    cities_count = query_db(f'SELECT COUNT(*) FROM cities WHERE country_id = {countries_id_query}')[0][0]
-    try:
-        page_id = int(request.args.get('page', 1))
-    except ValueError:
-        page_id = 1
-
-    page_split = 5
-    limit_page = (page_split * (int(page_id) - 1), page_split * int(page_id))
-    pages_count = range(1, math.ceil(cities_count / page_split) + 1)
-
-    id_cities_db = query_db(
-        f'SELECT city FROM cities WHERE country_id = {countries_id_query} LIMIT {limit_page[0]}, {limit_page[1]}')
-
-    return render_template(f'main{html_template}.html',
+    return render_template(f"main{html_template}.html",
                            countries=countries,
                            id_countries=id_countries_db,
-                           id_cities=id_cities_db,
+                           id_cities=pages_and_cities['id_cities_db'],
                            page=page_id,
-                           country=countries_id_query,
-                           pages_count=pages_count,
+                           country=country,
+                           pages_count=pages_and_cities['pages_count'],
                            q=query
                            )
 
