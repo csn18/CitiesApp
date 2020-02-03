@@ -1,4 +1,4 @@
-export const ajaxExec = (url, data) => {
+export const ajaxExec = (url, data = {}) => {
     return $.ajax({
         url: url,
         type: 'GET',

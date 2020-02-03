@@ -1,8 +1,9 @@
-import {dropDown, pagination, searchBox, initMap} from "./logic.js";
+import {dropDown, pagination, searchBox, initMap, ajaxExec} from "./logic.js";
 
+(async () => {
+    await initMap((await ajaxExec('/ajaxFunction'))['cities']);
+})();
 dropDown();
 pagination();
 searchBox();
-(async () => {
-    await initMap([]);
-})();
+

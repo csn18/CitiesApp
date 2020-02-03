@@ -3,10 +3,11 @@ import mysql.connector
 from flask import Flask, render_template, request, jsonify
 
 mydb = mysql.connector.connect(
-    host='localhost',
+    host='172.17.0.2',
+    port=3306,
     user='rasim',
-    passwd='4152',
-    database='amir_test'
+    passwd='4252',
+    database='cities_app'
 )
 
 app = Flask(__name__)
@@ -57,7 +58,7 @@ def page():
         country = request.args.get('countryId', 1)
         country = query_db(f"SELECT id FROM countries WHERE id LIKE '{country}%' ORDER BY country")[0]
     pages_and_cities = pagination(page_id, country)
-    result = {'pageCount': pages_and_cities['pages_cont'], 'cities': pages_and_cities['id_cities_db'],
+    result = {'pageCount': pages_and_cities['pages_count'], 'cities': pages_and_cities['id_cities_db'],
               'countryId': country}
     return jsonify(result)
 
