@@ -1,9 +1,20 @@
+DROP DATABASE IF EXISTS cities_app;
+
+CREATE DATABASE cities_app;
+USE cities_app;
+
+DROP TABLE IF EXISTS cities;
+DROP TABLE IF EXISTS countries;
+
 CREATE TABLE countries
 (
     id      INT NOT NULL AUTO_INCREMENT,
     country VARCHAR(100),
     PRIMARY KEY (id)
 );
+
+INSERT INTO countries(country) VALUES
+('Россия'), ('Украина'), ('США'), ('Германия'), ('Китай');
 
 CREATE TABLE cities
 (
@@ -13,10 +24,6 @@ CREATE TABLE cities
     PRIMARY KEY (id),
     FOREIGN KEY (country_id) REFERENCES countries (id)
 );
-
-INSERT INTO countries(country) VALUES
-('Россия'), ('Украина'), ('США'), ('Германия'), ('Китай');
-
 INSERT INTO cities(country_id, city) VALUES
 (1, 'Москва'),(1, 'Казань'),(1, 'Севастополь'),(1,'Екатеринбург'),(1,'Киров'),
 (1, 'Тула'),(1, 'Красноярск'),(1, 'Пермь'),(1,'Уфа'),(1,'Саратов'),(1, 'Ханты-Мансийск'),
