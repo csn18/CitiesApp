@@ -20,7 +20,7 @@ CREATE TABLE cities
 (
     id         INT AUTO_INCREMENT,
     country_id INT NOT NULL,
-    city       VARCHAR(20),
+    city       VARCHAR(100),
     PRIMARY KEY (id),
     FOREIGN KEY (country_id) REFERENCES countries (id)
 );

@@ -5,8 +5,8 @@ from flask import Flask, render_template, request, jsonify
 mydb = mysql.connector.connect(
     host='172.17.0.2',
     port=3306,
-    user='rasim',
-    passwd='4252',
+    user='root',
+    passwd='root',
     database='cities_app'
 )
 
@@ -107,4 +107,4 @@ def render_page(html_template):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0", port=5000)
