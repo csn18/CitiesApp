@@ -1,0 +1,20 @@
+version: "2"
+
+services:
+
+  db:
+    image: mariadb/server
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d/:ro
+
+
+  server:
+    build: .
+    links:
+      - db
+    ports:
+      - "5000:5000"
