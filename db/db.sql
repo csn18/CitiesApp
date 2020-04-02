@@ -1,6 +1,7 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;
 DROP DATABASE IF EXISTS cities_app;
 
-CREATE DATABASE cities_app;
+CREATE DATABASE cities_app CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE cities_app;
 
 DROP TABLE IF EXISTS cities;

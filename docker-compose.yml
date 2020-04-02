@@ -1,20 +1,16 @@
 version: "2"
 
 services:
+  server:
+    build: .
+    network_mode: "host"
+    ports:
+      - "5000"
 
   db:
     image: mariadb/server
+    network_mode: "host"
     environment:
-      MYSQL_ROOT_PASSWORD: root
-    ports:
-      - "3306:3306"
+      MARIADB_ROOT_PASSWORD: root
     volumes:
       - ./db:/docker-entrypoint-initdb.d/:ro
-
-
-  server:
-    build: .
-    links:
-      - db
-    ports:
-      - "5000:5000"

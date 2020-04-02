@@ -1,12 +1,13 @@
 import math
+
 import mysql.connector
 from flask import Flask, render_template, request, jsonify
 
 mydb = mysql.connector.connect(
     user='root',
     password='root',
-    host='db',
-    port="3306",
+    host='127.0.0.1',
+    port='3306',
     database='cities_app'
 )
 
