@@ -4,8 +4,6 @@ services:
   server:
     build: .
     network_mode: "host"
-    ports:
-      - "5000"
 
   db:
     image: mariadb/server

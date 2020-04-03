@@ -1,15 +1,9 @@
 import math
-import os
+import time
+from os import environ as env
 
 import mysql.connector
 from flask import Flask, render_template, request, jsonify
-
-mydb = mysql.connector.connect(
-    user=os.environ.get('MYSQL_USER'),
-    password=os.environ.get('MYSQL_PASSWORD'),
-    host=os.environ.get('MYSQL_ROOT_HOST'),
-    database=os.environ.get('MYSQL_DATABASE')
-)
 
 app = Flask(__name__)
 
@@ -77,14 +71,6 @@ def pagination(page_id, country):
     return result
 
 
-def query_db(query):
-    cursor = mydb.cursor()
-    cursor.execute(query)
-    result = cursor.fetchall()
-    result = [i[0] if len(i) == 1 else i for i in result]
-    return result
-
-
 def render_page(html_template):
     countries = query_db('SELECT country FROM countries')
     id_countries_db = query_db('SELECT id, country FROM countries')
@@ -107,5 +93,31 @@ def render_page(html_template):
                            )
 
 
+def db_connect():
+    retry_count = int(env.get('DB_RETRY_COUNT', 5))
+    for i in range(retry_count):
+        try:
+            return mysql.connector.connect(
+                user=env.get('DB_USER', 'root'),
+                password=env.get('DB_PASSWORD', 'root'),
+                host=env.get('DB_HOST', '127.0.0.1'),
+                database=env.get('DB_DATABASE', 'cities_app')
+            )
+        except mysql.connector.errors.InterfaceError:
+            time.sleep(4)
+    raise mysql.connector.errors.InterfaceError(msg='Database start timeout exceeded')
+
+
+def query_db(query):
+    cursor = mydb.cursor()
+    cursor.execute(query)
+    result = cursor.fetchall()
+    result = [i[0] if len(i) == 1 else i for i in result]
+    return result
+
+
 if __name__ == '__main__':
-    app.run(debug=os.environ.get('DEBUG'), host=os.environ.get('SERVER_HOST'), port=os.environ.get('SERVER_PORT'))
+    mydb = db_connect()
+    app.run(debug=env.get('DEBUG', 'True'),
+            host=env.get('SERVER_HOST', '0.0.0.0'),
+            port=env.get('SERVER_PORT', '5000'))

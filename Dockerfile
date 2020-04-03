@@ -7,5 +7,5 @@ RUN pip install --no-cache-dir Flask && \
 
 EXPOSE 5000
 
-CMD ["python3", "server.py"]
+CMD ['python3', 'server.py']
 
