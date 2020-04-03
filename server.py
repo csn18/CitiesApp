@@ -1,14 +1,14 @@
 import math
+import os
 
 import mysql.connector
 from flask import Flask, render_template, request, jsonify
 
 mydb = mysql.connector.connect(
-    user='root',
-    password='root',
-    host='127.0.0.1',
-    port='3306',
-    database='cities_app'
+    user=os.environ.get('MYSQL_USER'),
+    password=os.environ.get('MYSQL_PASSWORD'),
+    host=os.environ.get('MYSQL_ROOT_HOST'),
+    database=os.environ.get('MYSQL_DATABASE')
 )
 
 app = Flask(__name__)
@@ -108,4 +108,4 @@ def render_page(html_template):
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    app.run(debug=os.environ.get('DEBUG'), host=os.environ.get('SERVER_HOST'), port=os.environ.get('SERVER_PORT'))
