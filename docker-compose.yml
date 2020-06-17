@@ -1,0 +1,14 @@
+version: "2"
+
+services:
+  server:
+    build: .
+    network_mode: "host"
+
+  db:
+    image: mariadb/server
+    network_mode: "host"
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d/:ro

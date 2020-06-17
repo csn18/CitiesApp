@@ -1,3 +1,12 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;
+DROP DATABASE IF EXISTS cities_app;
+
+CREATE DATABASE cities_app CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE cities_app;
+
+DROP TABLE IF EXISTS cities;
+DROP TABLE IF EXISTS countries;
+
 CREATE TABLE countries
 (
     id      INT NOT NULL AUTO_INCREMENT,
@@ -5,18 +14,17 @@ CREATE TABLE countries
     PRIMARY KEY (id)
 );
 
+INSERT INTO countries(country) VALUES
+('Россия'), ('Украина'), ('США'), ('Германия'), ('Китай');
+
 CREATE TABLE cities
 (
     id         INT AUTO_INCREMENT,
     country_id INT NOT NULL,
-    city       VARCHAR(20),
+    city       VARCHAR(100),
     PRIMARY KEY (id),
     FOREIGN KEY (country_id) REFERENCES countries (id)
 );
-
-INSERT INTO countries(country) VALUES
-('Россия'), ('Украина'), ('США'), ('Германия'), ('Китай');
-
 INSERT INTO cities(country_id, city) VALUES
 (1, 'Москва'),(1, 'Казань'),(1, 'Севастополь'),(1,'Екатеринбург'),(1,'Киров'),
 (1, 'Тула'),(1, 'Красноярск'),(1, 'Пермь'),(1,'Уфа'),(1,'Саратов'),(1, 'Ханты-Мансийск'),
